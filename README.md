@@ -1,5 +1,7 @@
 # Plataforma de Trading
 
+[![CI](https://github.com/GabrielTiziano/trade-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/GabrielTiziano/trade-platform/actions/workflows/ci.yml)
+
 ## Signup
 
 Cria a conta do usuário a partir de nome, email, documento e senha.
