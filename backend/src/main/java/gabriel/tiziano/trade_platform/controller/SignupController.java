@@ -1,6 +1,9 @@
 package gabriel.tiziano.trade_platform.controller;
 
 import gabriel.tiziano.trade_platform.ValidateCpf;
+import gabriel.tiziano.trade_platform.ValidateEmail;
+import gabriel.tiziano.trade_platform.ValidateName;
+import gabriel.tiziano.trade_platform.ValidatePassword;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,13 +20,12 @@ public class SignupController {
     @PostMapping("/signup")
     public ResponseEntity<Map<String, String>> signup(@RequestBody Map<String, String> input) {
         String name = input.get("name");
-        if (name == null || !name.matches("[\\p{L}]+( [\\p{L}]+)+")) {
+        if (!ValidateName.validate(name)) {
             return ResponseEntity.status(422).body(Map.of("message", "Invalid name"));
         }
 
         String email = input.get("email");
-
-        if (email == null || !email.matches("^[\\w.+-]+@[\\w-]+(\\.[\\w-]+)*\\.(com|com\\.br)$")) {
+        if (!ValidateEmail.validate(email)) {
             return ResponseEntity.status(422).body(Map.of("message", "Invalid email"));
         }
 
@@ -33,7 +35,7 @@ public class SignupController {
         }
 
         String password = input.get("password");
-        if (password == null || !password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$")) {
+        if (!ValidatePassword.validate(password)) {
             return ResponseEntity.status(422).body(Map.of("message", "Invalid password"));
         }
 
@@ -45,8 +47,11 @@ public class SignupController {
     }
 
     @GetMapping("/accounts/{accountId}")
-    public Map<String, String> getAccount(@PathVariable String accountId) {
-        return accounts.get(accountId);
+    public ResponseEntity<Map<String, String>> getAccount(@PathVariable("accountId") String accountId) {
+        Map<String, String> account = accounts.get(accountId);
+        if (account == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(account);
     }
-
 }
