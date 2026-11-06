@@ -1,50 +1,35 @@
 package gabriel.tiziano.trade_platform;
 
-public class ValidateCpf {
+public final class ValidateCpf {
 
-    public static boolean validate(String str) {
-        if (str != null) {
-            if (str.length() >= 11 && str.length() <= 14) {
-                // cleaning cpf
-                str = str
-                        .replace(".", "")
-                        .replace("-", "")
-                        .replace(" ", "");
-                // tudo igual
-                final String cpf = str;
-                if (!cpf.chars().allMatch(c -> c == cpf.charAt(0))) {
-                    try {
-                        int d1, d2;
-                        int dg1, dg2, rest;
-                        int digito;
-                        String nDigResult;
-                        d1 = d2 = 0;
-                        dg1 = dg2 = rest = 0;
+    private static final String CPF_PATTERN = "\\d{11}";
+    private static final int BASE_DIGITS = 9;
 
-                        for (int nCount = 1; nCount < cpf.length() - 1; nCount++) {
-                            digito = Integer.parseInt(cpf.substring(nCount - 1, nCount));
-                            d1 = d1 + (11 - nCount) * digito;
-                            d2 = d2 + (12 - nCount) * digito;
-                        }
+    private ValidateCpf() {
+    }
 
-                        rest = (d1 % 11);
-                        dg1 = (rest < 2) ? 0 : 11 - rest;
-                        d2 += 2 * dg1;
-                        rest = (d2 % 11);
-                        if (rest < 2)
-                            dg2 = 0;
-                        else
-                            dg2 = 11 - rest;
+    public static boolean validate(String cpf) {
+        if (cpf == null) {
+            return false;
+        }
+        String digits = cpf.replaceAll("[.\\- ]", "");
+        if (!digits.matches(CPF_PATTERN) || hasAllDigitsEqual(digits)) {
+            return false;
+        }
+        String expectedCheckDigits = "" + checkDigit(digits, BASE_DIGITS) + checkDigit(digits, BASE_DIGITS + 1);
+        return digits.endsWith(expectedCheckDigits);
+    }
 
-                        String nDigVerific = cpf.substring(cpf.length() - 2);
-                        nDigResult = "" + dg1 + dg2;
-                        return nDigVerific.equals(nDigResult);
-                    } catch (Exception e) {
-                        System.err.println("Erro !" + e);
-                        return false;
-                    }
-                } else return false;
-            } else return false;
-        } else return false;
+    private static boolean hasAllDigitsEqual(String digits) {
+        return digits.chars().allMatch(c -> c == digits.charAt(0));
+    }
+
+    private static int checkDigit(String digits, int length) {
+        int sum = 0;
+        for (int i = 0; i < length; i++) {
+            sum += (digits.charAt(i) - '0') * (length + 1 - i);
+        }
+        int rest = sum % 11;
+        return rest < 2 ? 0 : 11 - rest;
     }
 }
