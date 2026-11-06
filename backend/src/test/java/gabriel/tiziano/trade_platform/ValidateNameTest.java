@@ -13,7 +13,10 @@ class ValidateNameTest {
             "Gabriel Tiziano",
             "Guilherme Almeida Gomes",
             "José da Silva",
-            "Conceição Souza"
+            "Conceição Souza",
+            "Ana-Maria Souza",
+            "Joana D'Arc Silva",
+            "Joana D’Arc Silva"
     })
     void deveValidarUmNomeValido(String name) {
         assertThat(ValidateName.validate(name)).isTrue();
@@ -27,7 +30,13 @@ class ValidateNameTest {
             "   ",
             "Gabriel@ Tiziano",
             "Gabriel  Tiziano",
-            " Gabriel Tiziano"
+            " Gabriel Tiziano",
+            "-Ana Souza",
+            "Ana- Souza",
+            "Ana--Maria Souza",
+            "Ana Souza'",
+            "'Ana Souza",
+            "Ana -Maria Souza"
     })
     void naoDeveValidarUmNomeInvalido(String name) {
         assertThat(ValidateName.validate(name)).isFalse();
