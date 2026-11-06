@@ -27,7 +27,12 @@ class ValidateCpfTest {
             "11111111111",      // todos os dígitos iguais
             "123",              // menor que o tamanho mínimo
             "714287938601234",  // maior que o tamanho máximo
-            "97456321559"       // dígito verificador errado
+            "97456321559",      // dígito verificador errado
+            "9745632155",       // 10 dígitos, um abaixo do tamanho exato
+            "974563215581",     // 12 dígitos, um acima do tamanho exato
+            "974.563.215-5",    // formatado, mas com apenas 10 dígitos
+            "9745632155a",      // caractere não numérico
+            "٩٧٤٥٦٣٢١٥٥٨"       // dígitos não ASCII
     })
     void naoDeveValidarUmCpfInvalido(String cpf) {
         boolean isValid = ValidateCpf.validate(cpf);
