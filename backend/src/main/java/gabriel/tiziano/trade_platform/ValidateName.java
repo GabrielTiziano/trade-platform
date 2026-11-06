@@ -2,7 +2,7 @@ package gabriel.tiziano.trade_platform;
 
 public final class ValidateName {
 
-    private static final String NAME_PATTERN = "[\\p{L}]+( [\\p{L}]+)+";
+    private static final String NAME_PATTERN = "\\p{L}+(['’-]\\p{L}+)*( \\p{L}+(['’-]\\p{L}+)*)+";
 
     private ValidateName() {
     }
