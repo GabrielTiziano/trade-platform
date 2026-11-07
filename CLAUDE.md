@@ -1,11 +1,16 @@
 # CLAUDE.md
 
-## MANDATORY: load the `automated-tests` skill before changing code
+## MANDATORY: load the `automated-tests` and `code-standards` skills before changing code
 
-Whenever any code is created or changed, in any module, you MUST load the project skill `automated-tests` (`.claude/skills/automated-tests/SKILL.md`) **before touching the code**, with no exceptions (including small tweaks such as a one-line regex change).
+Whenever any code is created or changed, in any module, you MUST load both project skills **before touching the code**, with no exceptions (including small tweaks such as a one-line regex change):
 
-- Do not edit code or tests until the skill is loaded.
-- Do not finish the task without checking that the behavior is covered by tests.
+- `automated-tests` (`.claude/skills/automated-tests/SKILL.md`): testing rules.
+- `code-standards` (`.claude/skills/code-standards/SKILL.md`): coding rules (method size, parameters, early returns, constants, etc.).
+
+Rules:
+
+- Do not edit code or tests until both skills are loaded.
+- Do not finish the task without checking that the behavior is covered by tests and that the code follows the standards.
 
 ## Project layout
 
@@ -79,4 +84,5 @@ Coverage is meant to be measured with **JaCoCo** (target: above 80%), but **JaCo
 
 ## References
 
+- **Code standards:** see the mandatory rule at the top of this file. The skill `code-standards` (`.claude/skills/code-standards/SKILL.md`) defines the coding rules for `backend/` (Java) and `frontend/` (TypeScript/React), with Bad/Good examples in `references/rules.md`.
 - **Test automation:** see the mandatory rule at the top of this file. The skill `automated-tests` (`.claude/skills/automated-tests/SKILL.md`) defines the testing pyramid (unit, integration, E2E), tooling per module (JUnit 5/AssertJ/Mockito in `backend/`, Vitest/Testing Library in `frontend/`, Playwright in `e2e/`), naming (`*Test` / `*IT`), and the coverage target (>80%). It defines the testing pyramid (unit, integration, E2E), tooling per module (JUnit 5/AssertJ/Mockito in `backend/`, Vitest/Testing Library in `frontend/`, Playwright in `e2e/`), naming (`*Test` / `*IT`), and the coverage target (>80%).
