@@ -1,57 +1,35 @@
 package gabriel.tiziano.trade_platform.controller;
 
-import gabriel.tiziano.trade_platform.ValidateCpf;
-import gabriel.tiziano.trade_platform.ValidateEmail;
-import gabriel.tiziano.trade_platform.ValidateName;
-import gabriel.tiziano.trade_platform.ValidatePassword;
+import gabriel.tiziano.trade_platform.service.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 public class SignupController {
 
-    private final Map<String, Map<String, String>> accounts = new ConcurrentHashMap<>();
+    private final AccountService accountService;
+
+    public SignupController(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @PostMapping("/signup")
-    public ResponseEntity<Map<String, String>> signup(@RequestBody Map<String, String> input) {
-        String name = input.get("name");
-        if (!ValidateName.validate(name)) {
-            return ResponseEntity.status(422).body(Map.of("message", "Invalid name"));
-        }
-
-        String email = input.get("email");
-        if (!ValidateEmail.validate(email)) {
-            return ResponseEntity.status(422).body(Map.of("message", "Invalid email"));
-        }
-
-        String document = input.get("document");
-        if (!ValidateCpf.validate(document)) {
-            return ResponseEntity.status(422).body(Map.of("message", "Invalid document"));
-        }
-
-        String password = input.get("password");
-        if (!ValidatePassword.validate(password)) {
-            return ResponseEntity.status(422).body(Map.of("message", "Invalid password"));
-        }
-
-        String accountId = UUID.randomUUID().toString();
-        Map<String, String> account = new HashMap<>(input);
-        account.put("accountId", accountId);
-        accounts.put(accountId, account);
-        return ResponseEntity.ok(Map.of("accountId", accountId));
+    public SignupOutput signup(@RequestBody SignupInput input) {
+        return accountService.signup(input);
     }
 
     @GetMapping("/accounts/{accountId}")
-    public ResponseEntity<Map<String, String>> getAccount(@PathVariable("accountId") String accountId) {
-        Map<String, String> account = accounts.get(accountId);
-        if (account == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(account);
+    public ResponseEntity<GetAccountOutput> getAccount(@PathVariable("accountId") String accountId) {
+        return accountService.getAccount(accountId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @ExceptionHandler(InvalidInputException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidInput(InvalidInputException e) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(Map.of("message", e.getMessage()));
     }
 }
