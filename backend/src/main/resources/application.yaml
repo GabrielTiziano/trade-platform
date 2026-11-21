@@ -1,3 +1,7 @@
 spring:
   application:
     name: trade-platform
+  datasource:
+    url: jdbc:postgresql://localhost:5432/app
+    username: postgres
+    password: 123456

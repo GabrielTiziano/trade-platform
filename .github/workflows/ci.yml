@@ -9,7 +9,6 @@ on:
 permissions:
   contents: read
 
-# Um novo push no mesmo PR cancela a execução anterior, que ficou obsoleta
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -19,6 +18,21 @@ jobs:
     name: Backend (build e testes)
     runs-on: ubuntu-latest
     timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: "123456"
+          POSTGRES_DB: app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
 
     defaults:
       run:
@@ -32,7 +46,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
           cache: maven
           cache-dependency-path: backend/pom.xml
 
@@ -44,5 +58,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: surefire-reports
-          path: backend/target/surefire-reports/
+          path: |
+            backend/target/surefire-reports/
+            backend/target/failsafe-reports/
           retention-days: 7
